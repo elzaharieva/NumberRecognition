@@ -4,8 +4,13 @@
 
 <h1>My First Heading</h1>
 
-<input type="file" id="file" name="file" />
-<button type="button" onclick="upload()">Post Missing Invitation</button>
+
+
+<form action="upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" />
+    <input type="submit" />
+</form>
+<!--  button type="button" onclick="upload()">Post Missing Invitation</button-->
 
 
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -19,10 +24,6 @@
 			formData.append('file', file);
 			$.ajax({
 				type : "POST",
-				xhr: function() {
-					var myXhr = $.ajaxSettings.xhr();
-					return myXhr;
-				},
 				url : "upload",
 				success : function(data) {
 					alert(data);
