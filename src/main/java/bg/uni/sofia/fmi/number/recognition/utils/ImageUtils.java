@@ -13,7 +13,8 @@ public final class ImageUtils {
 
 	public static final Color white = Color.white;
 	public static final int COLOR_RESTRICTION = 225;
-
+	public static final int IMAGE_SIZE = 28;
+	
 	private static BufferedImage normalize(BufferedImage image) {
 		image = removeWhiteTopRows(image);
 		image = removeWhiteBottomRows(image);
@@ -32,18 +33,18 @@ public final class ImageUtils {
 			image = addTopRow(image);
 		}
 		
-		while(image.getHeight()%28!=0){
+		while(image.getHeight()%IMAGE_SIZE!=0){
 			image = addTopRow(image);
 			image = addBottomRow(image);
 		}
-		while(image.getWidth()%28!=0){
+		while(image.getWidth()%IMAGE_SIZE!=0){
 			image = addLeftColum(image);
 			image = addRightColum(image);
 		}
 		
-		int matrixWidth = image.getWidth()/28;
-		int matrixHeight =  image.getHeight()/28;
-		BufferedImage finalImage = new BufferedImage(28, 28, BufferedImage.TYPE_INT_RGB);
+		int matrixWidth = image.getWidth()/IMAGE_SIZE;
+		int matrixHeight =  image.getHeight()/IMAGE_SIZE;
+		BufferedImage finalImage = new BufferedImage(IMAGE_SIZE, IMAGE_SIZE, BufferedImage.TYPE_INT_RGB);
 		finalImage = fillImage(finalImage, white.getRGB());
 		
 		for (int i = 0; i < image.getWidth(); i+=matrixWidth) {
