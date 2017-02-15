@@ -4,10 +4,39 @@
 
 <h1>My First Heading</h1>
 
-<form action="upload" method="post" enctype="multipart/form-data">
-    <input type="file" name="file" />
-    <input type="submit" />
-</form>
+<input type="file" id="file" name="file" />
+<button type="button" onclick="upload()">Post Missing Invitation</button>
 
+
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+<script>
+		function upload(){
+			var formData = new FormData();
+			var file = $('#file')[0].files[0];
+			formData.append('file', file);
+			$.ajax({
+				type : "POST",
+				xhr: function() {
+					var myXhr = $.ajaxSettings.xhr();
+					return myXhr;
+				},
+				url : "upload",
+				success : function(data) {
+					alert(data);
+				},
+				error: function(xhr, textStatus, errorThrown){
+					
+				},
+				data: formData,
+				cache: false,
+				contentType: 'multipart/form-data',
+				processData: false
+			});
+
+		}
+</script>
 </body>
 </html>
