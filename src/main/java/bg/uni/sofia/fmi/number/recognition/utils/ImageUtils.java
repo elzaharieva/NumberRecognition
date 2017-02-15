@@ -13,13 +13,129 @@ public final class ImageUtils {
 
 	public static final Color white = Color.white;
 	public static final int COLOR_RESTRICTION = 225;
-	
+
 	private static BufferedImage normalize(BufferedImage image) {
 		image = removeWhiteTopRows(image);
 		image = removeWhiteBottomRows(image);
 		image = removeWhiteLeftCols(image);
 		image = removeWhiteRightCol(image);
 		return image;
+	}
+
+	public static BufferedImage prepareDigit(BufferedImage image) {
+		int imageWidth = image.getWidth();
+		int imageHeight = image.getHeight();
+		if (imageWidth % 2 == 1) {
+			image = addLeftColum(image);
+		}
+		if (imageHeight % 2 == 1) {
+			image = addTopRow(image);
+		}
+		
+		while(image.getHeight()%28!=0){
+			image = addTopRow(image);
+			image = addBottomRow(image);
+		}
+		while(image.getWidth()%28!=0){
+			image = addLeftColum(image);
+			image = addRightColum(image);
+		}
+		
+		int matrixWidth = image.getWidth()/28;
+		int matrixHeight =  image.getHeight()/28;
+		BufferedImage finalImage = new BufferedImage(28, 28, BufferedImage.TYPE_INT_RGB);
+		finalImage = fillImage(finalImage, white.getRGB());
+		
+		for (int i = 0; i < image.getWidth(); i+=matrixWidth) {
+			for (int j = 0; j < image.getHeight(); j+=matrixHeight) {
+				for (int j2 = i; j2 < i+matrixWidth; j2++) {
+					for (int k = j; k < j+matrixHeight; k++) {
+						if(!isWhitePixel(image.getRGB(j2, k))){
+							finalImage.setRGB(i/matrixWidth, j/matrixHeight,Color.BLACK.getRGB());
+						}
+					}
+					
+				}
+			}
+		}
+		return finalImage;
+	}
+	
+	private static BufferedImage fillImage(BufferedImage image,int rgb){
+		int imageWidth = image.getHeight();
+		int imageHeight = image.getWidth();
+		for (int i = 0; i <imageWidth; i++) {
+			for (int j = 0; j < imageHeight; j++) {
+				image.setRGB(i, j, rgb);
+			}
+		}
+		return image;
+	}
+
+	private static BufferedImage addLeftColum(BufferedImage image) {
+		int imageWidth = image.getWidth();
+		int imageHeight = image.getHeight();
+		BufferedImage newImage = new BufferedImage(imageWidth + 1, imageHeight, BufferedImage.TYPE_INT_RGB);
+		for (int i = 0; i < imageHeight; i++) {
+			newImage.setRGB(0, i, white.getRGB());
+		}
+
+		for (int i = 0; i < imageWidth; i++) {
+			for (int j = 0; j < imageHeight; j++) {
+				newImage.setRGB(i + 1, j, image.getRGB(i, j));
+			}
+		}
+		return newImage;
+	}
+
+	private static BufferedImage addRightColum(BufferedImage image) {
+		int imageWidth = image.getWidth();
+		int imageHeight = image.getHeight();
+		BufferedImage newImage = new BufferedImage(imageWidth + 1, imageHeight, BufferedImage.TYPE_INT_RGB);
+		for (int i = 0; i < imageHeight; i++) {
+			newImage.setRGB(imageWidth, i, white.getRGB());
+		}
+
+		for (int i = 0; i < imageWidth; i++) {
+			for (int j = 0; j < imageHeight; j++) {
+				newImage.setRGB(i, j, image.getRGB(i, j));
+			}
+		}
+		
+		
+		return newImage;
+	}
+
+	private static BufferedImage addTopRow(BufferedImage image) {
+		int imageWidth = image.getWidth();
+		int imageHeight = image.getHeight();
+		BufferedImage newImage = new BufferedImage(imageWidth, imageHeight + 1, BufferedImage.TYPE_INT_RGB);
+		for (int i = 0; i < imageWidth; i++) {
+			newImage.setRGB(i, 0, white.getRGB());
+		}
+
+		for (int i = 0; i < imageWidth; i++) {
+			for (int j = 0; j < imageHeight; j++) {
+				newImage.setRGB(i, j + 1, image.getRGB(i, j));
+			}
+		}
+		return newImage;
+	}
+
+	private static BufferedImage addBottomRow(BufferedImage image) {
+		int imageWidth = image.getWidth();
+		int imageHeight = image.getHeight();
+		BufferedImage newImage = new BufferedImage(imageWidth, imageHeight + 1, BufferedImage.TYPE_INT_RGB);
+		for (int i = 0; i < imageWidth; i++) {
+			newImage.setRGB(i, imageHeight, white.getRGB());
+		}
+
+		for (int i = 0; i < imageWidth; i++) {
+			for (int j = 0; j < imageHeight; j++) {
+				newImage.setRGB(i, j, image.getRGB(i, j));
+			}
+		}
+		return newImage;
 	}
 
 	public static List<BufferedImage> splitToDigits(BufferedImage image) {
@@ -199,11 +315,10 @@ public final class ImageUtils {
 		}
 		return -1;
 	}
-	
-	private static boolean isWhitePixel(int color){
+
+	private static boolean isWhitePixel(int color) {
 		Color pixelColor = new Color(color);
-		if (pixelColor.getBlue() < 225 && pixelColor.getRed() < 225
-				&& pixelColor.getGreen() < 225) {
+		if (pixelColor.getBlue() < 225 && pixelColor.getRed() < 225 && pixelColor.getGreen() < 225) {
 			return false;
 		}
 		return true;

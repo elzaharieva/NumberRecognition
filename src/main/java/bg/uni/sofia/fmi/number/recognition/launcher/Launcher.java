@@ -1,5 +1,6 @@
 package bg.uni.sofia.fmi.number.recognition.launcher;
 
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -15,13 +16,19 @@ import bg.uni.sofia.fmi.number.recognition.utils.FileUtils;
 import bg.uni.sofia.fmi.number.recognition.utils.ImageUtils;
 
 public class Launcher {
-	
+	/**
+	 * 
+	 * @param args
+	 * @throws IOException
+	 */
 	public static void main(String[] args) throws IOException {
 		File file = new File("C:\\Users\\Kaloyan Spiridonov\\Desktop\\number.jpg");
 		BufferedImage img = ImageIO.read(file);
 		List<BufferedImage> digits = ImageUtils.splitToDigits(img);
+		
 		for (int i = 0; i < digits.size(); i++) {
-			ImageUtils.save(digits.get(i), "jpg", new File("C:\\Users\\Kaloyan Spiridonov\\Desktop\\digit"+i+".jpg"));
+			BufferedImage newImage = ImageUtils.prepareDigit(digits.get(i));
+			ImageUtils.save(newImage, "jpg", new File("C:\\Users\\Kaloyan Spiridonov\\Desktop\\digit"+i+".jpg"));
 		}
 		
 	}
