@@ -13,7 +13,7 @@ public final class ImageUtils {
 
 	public static final Color white = Color.white;
 	public static final int COLOR_RESTRICTION = 225;
-	public static final int IMAGE_SIZE = 28;
+	public static final int IMAGE_SIZE = 20;
 	
 	private static BufferedImage normalize(BufferedImage image) {
 		image = removeWhiteTopRows(image);
@@ -59,6 +59,14 @@ public final class ImageUtils {
 				}
 			}
 		}
+		
+		for(int i=0; i<4; i++) {
+			finalImage = addTopRow(finalImage);
+			finalImage = addBottomRow(finalImage);
+			finalImage = addLeftColum(finalImage);
+			finalImage = addRightColum(finalImage);
+		}
+		
 		return finalImage;
 	}
 	
