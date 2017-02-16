@@ -108,12 +108,17 @@ public class UploadImageServlet extends HttpServlet{
 		return image;
 	}
 	
-	private double[] imageToArray(BufferedImage image){
+	private double[] imageToArray(BufferedImage image) {
 		double[] arrayImage = new double[784];
-		int k=0;
+		int k = 0;
 		for (int i = 0; i < image.getWidth(); i++) {
 			for (int j = 0; j < image.getHeight(); j++) {
-				arrayImage[k]=image.getRGB(j, i)& 0xFF;
+				double color = image.getRGB(j, i) & 0xFF;
+				if (color > 127) {
+					arrayImage[k] = 1;
+				} else {
+					arrayImage[k] = 0;
+				}
 				k++;
 			}
 		}
