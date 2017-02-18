@@ -34,20 +34,7 @@ public class Launcher {
 			BufferedImage newImage = ImageUtils.prepareDigit(digits.get(i));
 			neuralNetwork.setInputs(otsu(imageToArray(newImage)));
             double[] receivedOutput = neuralNetwork.getOutput();
-            BufferedImage bla = new BufferedImage(28, 28, BufferedImage.TYPE_BYTE_GRAY);
-            double[] blaImage = imageToArray(newImage);
-    		int k =0;
-			for (int j = 0; j < 28; j++) {
-				for (int j2 = 0; j2 < 28; j2++) {
-					int color = (int) blaImage[k];
-					bla.setRGB(j2, j, color);
-					k++;
-				}					
-			}
-			ImageUtils.save(bla, "jpg", new File(PATH_TO_FILE + "\\bla.jpg"));
             
-            
-            		
             double max = receivedOutput[0];
             double recognizedDigit = 0;
             for(int j = 0; j < receivedOutput.length; j++) {
@@ -56,7 +43,6 @@ public class Launcher {
                     recognizedDigit = j;
                 }
             }
-
             System.out.println("Recognized: " +  recognizedDigit + ". Corresponding output value was " + max);
 
 			ImageUtils.save(newImage, "jpg", new File(PATH_TO_FILE + "\\digit" + i + ".jpg"));
