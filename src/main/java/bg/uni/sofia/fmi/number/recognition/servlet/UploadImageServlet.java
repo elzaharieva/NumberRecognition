@@ -40,9 +40,8 @@ public class UploadImageServlet extends HttpServlet {
 			String finalDigit = "";
 			for (int i = 0; i < digits.size(); i++) {
 				BufferedImage newImage = ImageUtils.prepareDigit(digits.get(i));
-				newImage = blackWhiteSwap(newImage);
+				neuralNetwork.setInputs(otsu(imageToArray(newImage)));
 
-				neuralNetwork.setInputs(imageToArray(newImage));
 				double[] receivedOutput = neuralNetwork.getOutput();
 
 				double max = receivedOutput[0];
@@ -106,4 +105,81 @@ public class UploadImageServlet extends HttpServlet {
 		}
 		return arrayImage;
 	}
+	
+	 private double[] otsu(double[] data) {
+	        int[] histogram = new int[256];
+
+	        for(double datum : data) {
+	            histogram[(int) datum]++;
+	        }
+
+	        double sum = 0;
+	        for(int i = 0; i < histogram.length; i++) {
+	            sum += i * histogram[i];
+	        }
+
+	        double sumB = 0;
+	        int wB = 0;
+	        int wF = 0;
+
+	        double maxVariance = 0;
+	        int threshold = 0;
+
+	        int i = 0;
+	        boolean found = false;
+
+	        while(i < histogram.length && !found) {
+	            wB += histogram[i];
+
+	            if(wB != 0) {
+	                wF = data.length - wB;
+
+	                if(wF != 0) {
+	                    sumB += (i * histogram[i]);
+
+	                    double mB = sumB / wB;
+	                    double mF = (sum - sumB) / wF;
+
+	                    double varianceBetween = wB * Math.pow((mB - mF), 2);
+
+	                    if(varianceBetween > maxVariance) {
+	                        maxVariance = varianceBetween;
+	                        threshold = i;
+	                    }
+	                }
+
+	                else {
+	                    found = true;
+	                }
+	            }
+
+	            i++;
+	        }
+
+	/*        System.out.println(label + ": threshold is " + threshold);
+
+	        for(i = 0; i < data.length; i++) {
+	            if(i % 28 == 0) {
+	                System.out.println("<br />");
+	            }
+
+	            System.out.print("<span style='color:rgb(" + (int) (255 - data[i]) + ", " + (int) (255 - data[i]) + ", " + (int) (255 - data[i]) + ")'>&#9608;</span>");
+	        } */
+
+	        for(i = 0; i < data.length; i++) {
+	            data[i] = data[i] <= threshold ? 0 : 1;
+	        }
+	/*
+	        if(label == 7 || label == 9) {
+	            for(i = 0; i < data.length; i++) {
+	                if(i % 28 == 0) {
+	                    System.out.println("");
+	                }
+
+	                System.out.print(data[i] == 1 ? "#" : " ");
+	            }
+	        }*/
+	        return data;
+	    }
+
 }

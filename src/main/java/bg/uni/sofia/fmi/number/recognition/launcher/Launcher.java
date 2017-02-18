@@ -53,8 +53,8 @@ public class Launcher {
 	private static double[] imageToArray(BufferedImage image) {
 		double[] arrayImage = new double[784];
 		int k = 0;
-		for (int i = 0; i < image.getWidth(); i++) {
-			for (int j = 0; j < image.getHeight(); j++) {
+		for (int i = 0; i < image.getHeight(); i++) {
+			for (int j = 0; j < image.getWidth(); j++) {
 				double color = image.getRGB(j, i)&0xFF;
 				arrayImage[k]=color;
 				k++;
