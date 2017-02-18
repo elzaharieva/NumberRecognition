@@ -22,10 +22,12 @@ public class Launcher {
 	 * @throws IOException
 	 * @throws ClassNotFoundException 
 	 */
+	private final static String PATH_TO_FILE = "C:\\Users\\Elena\\Desktop";
+	
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		NeuralNetwork neuralNetwork = deserializeNeuralNetwork();
 		
-		File file = new File("C:\\Users\\Elena\\Desktop\\number.jpg");
+		File file = new File(PATH_TO_FILE + "\\number.jpg");
 		BufferedImage img = ImageIO.read(file);
 		List<BufferedImage> digits = ImageUtils.splitToDigits(img);
 		for (int i = 0; i < digits.size(); i++) {
@@ -42,7 +44,7 @@ public class Launcher {
 					k++;
 				}					
 			}
-			ImageUtils.save(bla, "jpg", new File("C:\\Users\\Elena\\Desktop\\bla.jpg"));
+			ImageUtils.save(bla, "jpg", new File(PATH_TO_FILE + "\\bla.jpg"));
             
             
             		
@@ -57,7 +59,7 @@ public class Launcher {
 
             System.out.println("Recognized: " +  recognizedDigit + ". Corresponding output value was " + max);
 
-			ImageUtils.save(newImage, "jpg", new File("C:\\Users\\Elena\\Desktop\\digit" + i + ".jpg"));
+			ImageUtils.save(newImage, "jpg", new File(PATH_TO_FILE + "\\digit" + i + ".jpg"));
 		}
 
 	}
