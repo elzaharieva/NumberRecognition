@@ -158,6 +158,7 @@ public final class ImageUtils {
 					newImage.setRGB(j, i, image.getRGB(j, i));
 				}
 			}
+			newImage = normalize(newImage);
 			digits.add(newImage);
 			newImage = new BufferedImage(image.getWidth() - col, image.getHeight(), BufferedImage.TYPE_INT_RGB);
 			for (int i = 0; i < image.getHeight(); i++) {

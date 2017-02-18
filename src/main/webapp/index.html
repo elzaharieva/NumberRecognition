@@ -1,43 +1,28 @@
 <!DOCTYPE html>
-<html>
-<body>
-
-<h1>My First Heading</h1>
-
-
-
-<form action="upload" method="post" enctype="multipart/form-data">
-    <input type="file" name="file" />
-    <input type="submit" />
-</form>
-<!--  button type="button" onclick="upload()">Post Missing Invitation</button-->
+<html lang="en">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 
 
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<link rel="icon" type="image/png" href="icons/favicon.png">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/bootstrap-filestyle.js"></script>
+	</head>
 
-
-<script>
-		function upload(){
-			var formData = new FormData();
-			var file = $('#file')[0].files[0];
-			formData.append('file', file);
-			$.ajax({
-				type : "POST",
-				url : "upload",
-				success : function(data) {
-					alert(data);
-				},
-				error: function(xhr, textStatus, errorThrown){
-					
-				},
-				data: formData,
-				cache: false,
-				contentType: 'multipart/form-data',
-				processData: false
-			});
-
-		}
-</script>
-</body>
+	<body>
+	<div class="container" style="margin-top: 30px;margin-bottom: 30px">
+			<div class="row">
+				<div class="span12">
+					<div class="well">
+						<form action="upload" method="post" enctype="multipart/form-data">
+							<input type="file" id="file" name="file" class="filestyle" data-classInput="input-xxlarge">		
+							<input class=".btn-default" type="submit" />	
+						</form>
+					</div>
+				</div>
+				</div>
+	</body>
 </html>

@@ -1,25 +1,19 @@
 package bg.uni.sofia.fmi.number.recognition.launcher;
 
 import java.awt.Color;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-
-import bg.uni.sofia.fmi.number.recognition.entry.ImageEntry;
-import bg.uni.sofia.fmi.number.recognition.utils.FileUtils;
+import bg.uni.sofia.fmi.number.recognition.neuralnetwork.NeuralNetwork;
 import bg.uni.sofia.fmi.number.recognition.utils.ImageUtils;
-import net.vivin.neural.NeuralNetwork;
 
 public class Launcher {
 	/**
@@ -29,27 +23,32 @@ public class Launcher {
 	 * @throws ClassNotFoundException 
 	 */
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
+		NeuralNetwork neuralNetwork = deserializeNeuralNetwork();
+		
 		File file = new File("C:\\Users\\Kaloyan Spiridonov\\Desktop\\number.jpg");
 		BufferedImage img = ImageIO.read(file);
 		List<BufferedImage> digits = ImageUtils.splitToDigits(img);
-
+		
 		for (int i = 0; i < digits.size(); i++) {
 			BufferedImage newImage = ImageUtils.prepareDigit(digits.get(i));
+			
 			newImage = blackWhiteSwap(newImage);
-//			System.out.println("------------------");
-//			System.out.println(Arrays.toString(imageToArray(newImage)));
-//			System.out.println("------------------");
-			
-			FileInputStream fileInputStream = new FileInputStream("C:\\Users\\Kaloyan Spiridonov\\Desktop\\neuralNetwork.net");
-			BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
-			ObjectInputStream objectInputStream = new ObjectInputStream(bufferedInputStream);
-			NeuralNetwork neuralNetwork;
-			neuralNetwork = (NeuralNetwork) objectInputStream.readObject();
-			objectInputStream.close();
-			
-			neuralNetwork.setInputs(imageToArray(newImage));
+			neuralNetwork.setInputs(otsu(imageToArray(newImage)));
             double[] receivedOutput = neuralNetwork.getOutput();
-
+            BufferedImage bla = new BufferedImage(28, 28, BufferedImage.TYPE_BYTE_GRAY);
+            double[] blaImage = imageToArray(newImage);
+    		int k =0;
+			for (int j = 0; j < 28; j++) {
+				for (int j2 = 0; j2 < 28; j2++) {
+					int color = (int) blaImage[k];
+					bla.setRGB(j2, j, color);
+					k++;
+				}					
+			}
+			ImageUtils.save(bla, "jpg", new File("C:\\Users\\Kaloyan Spiridonov\\Desktop\\bla.jpg"));
+            
+            
+            		
             double max = receivedOutput[0];
             double recognizedDigit = 0;
             for(int j = 0; j < receivedOutput.length; j++) {
@@ -69,11 +68,9 @@ public class Launcher {
 	private static BufferedImage blackWhiteSwap(BufferedImage image) {
 		for (int i = 0; i < image.getWidth(); i++) {
 			for (int j = 0; j < image.getHeight(); j++) {
-				if (image.getRGB(i, j) == Color.BLACK.getRGB()) {
-					image.setRGB(i, j, Color.white.getRGB());
-				} else {
-					image.setRGB(i, j, Color.BLACK.getRGB());
-				}
+				Color color = new Color(image.getRGB(i, j));
+				Color color2 = new Color(255-color.getRed(),255- color.getGreen(),255- color.getBlue());
+					image.setRGB(i, j, color2.getRGB());
 			}
 		}
 		return image;
@@ -84,35 +81,104 @@ public class Launcher {
 		int k = 0;
 		for (int i = 0; i < image.getWidth(); i++) {
 			for (int j = 0; j < image.getHeight(); j++) {
-				double color = image.getRGB(j, i) & 0xFF;
-				if (color > 127) {
-					arrayImage[k] = 1;
-				} else {
-					arrayImage[k] = 0;
-				}
+				double color = image.getRGB(j, i)&0xFF;
+				arrayImage[k]=color;
+//				if (color > 127) {
+//					arrayImage[k] = 1;
+//				} else {
+//					arrayImage[k] = 0;
+//				}
 				k++;
 			}
 		}
 		return arrayImage;
 	}
 
-	// public static void main(String[] args) {
-	// Path trainingFile = Paths.get("resources", "train.csv");
-	// List<String> lines = FileUtils.readFile(trainingFile);
-	// List<ImageEntry> images = new ArrayList<ImageEntry>();
-	// lines.forEach(line -> {
-	// ImageEntry image = toImageEntry(line);
-	// images.add(image);
-	// });
-	// System.out.println(images);
-	// }
-	//
-	// private static ImageEntry toImageEntry(String line) {
-	// String[] elements = line.split(",");
-	// ImageEntry image = new ImageEntry();
-	// for (int i = 1; i < elements.length; i++) {
-	// image.add(Integer.parseInt(elements[i]));
-	// }
-	// return image;
-	// }
+	private static NeuralNetwork deserializeNeuralNetwork() throws ClassNotFoundException, IOException{
+		FileInputStream fileInputStream = new FileInputStream(System.getProperty("user.dir")+"\\target\\classes\\neuralNetwork.net");
+		BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+		ObjectInputStream objectInputStream = new ObjectInputStream(bufferedInputStream);
+		NeuralNetwork neuralNetwork = (NeuralNetwork) objectInputStream.readObject();
+		objectInputStream.close();
+		return neuralNetwork;
+	}
+	
+    //Uses Otsu's Threshold algorithm to convert from grayscale to black and white
+    private static double[] otsu(double[] data) {
+        int[] histogram = new int[256];
+
+        for(double datum : data) {
+            histogram[(int) datum]++;
+        }
+
+        double sum = 0;
+        for(int i = 0; i < histogram.length; i++) {
+            sum += i * histogram[i];
+        }
+
+        double sumB = 0;
+        int wB = 0;
+        int wF = 0;
+
+        double maxVariance = 0;
+        int threshold = 0;
+
+        int i = 0;
+        boolean found = false;
+
+        while(i < histogram.length && !found) {
+            wB += histogram[i];
+
+            if(wB != 0) {
+                wF = data.length - wB;
+
+                if(wF != 0) {
+                    sumB += (i * histogram[i]);
+
+                    double mB = sumB / wB;
+                    double mF = (sum - sumB) / wF;
+
+                    double varianceBetween = wB * Math.pow((mB - mF), 2);
+
+                    if(varianceBetween > maxVariance) {
+                        maxVariance = varianceBetween;
+                        threshold = i;
+                    }
+                }
+
+                else {
+                    found = true;
+                }
+            }
+
+            i++;
+        }
+
+/*        System.out.println(label + ": threshold is " + threshold);
+
+        for(i = 0; i < data.length; i++) {
+            if(i % 28 == 0) {
+                System.out.println("<br />");
+            }
+
+            System.out.print("<span style='color:rgb(" + (int) (255 - data[i]) + ", " + (int) (255 - data[i]) + ", " + (int) (255 - data[i]) + ")'>&#9608;</span>");
+        } */
+
+        for(i = 0; i < data.length; i++) {
+            data[i] = data[i] <= threshold ? 0 : 1;
+        }
+/*
+        if(label == 7 || label == 9) {
+            for(i = 0; i < data.length; i++) {
+                if(i % 28 == 0) {
+                    System.out.println("");
+                }
+
+                System.out.print(data[i] == 1 ? "#" : " ");
+            }
+        }*/
+        return data;
+    }
+
+
 }
