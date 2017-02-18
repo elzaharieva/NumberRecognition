@@ -27,32 +27,32 @@ public final class ImageUtils {
 		int imageWidth = image.getWidth();
 		int imageHeight = image.getHeight();
 		if (imageWidth % 2 == 1) {
-			image = addLeftColum(image);
+			image = addLeftColum(image, white.getRGB());
 		}
 		if (imageHeight % 2 == 1) {
-			image = addTopRow(image);
+			image = addTopRow(image, white.getRGB());
 		}
 		
 		while(image.getHeight()%IMAGE_SIZE!=0){
-			image = addTopRow(image);
-			image = addBottomRow(image);
+			image = addTopRow(image, white.getRGB());
+			image = addBottomRow(image, white.getRGB());
 		}
 		while(image.getWidth()%IMAGE_SIZE!=0){
-			image = addLeftColum(image);
-			image = addRightColum(image);
+			image = addLeftColum(image, white.getRGB());
+			image = addRightColum(image, white.getRGB());
 		}
 		
 		int matrixWidth = image.getWidth()/IMAGE_SIZE;
 		int matrixHeight =  image.getHeight()/IMAGE_SIZE;
 		BufferedImage finalImage = new BufferedImage(IMAGE_SIZE, IMAGE_SIZE, BufferedImage.TYPE_INT_RGB);
-		finalImage = fillImage(finalImage, white.getRGB());
+		finalImage = fillImage(finalImage, Color.BLACK.getRGB());
 		
 		for (int i = 0; i < image.getWidth(); i+=matrixWidth) {
 			for (int j = 0; j < image.getHeight(); j+=matrixHeight) {
 				for (int j2 = i; j2 < i+matrixWidth; j2++) {
 					for (int k = j; k < j+matrixHeight; k++) {
 						if(!isWhitePixel(image.getRGB(j2, k))){
-							finalImage.setRGB(i/matrixWidth, j/matrixHeight,Color.BLACK.getRGB());
+							finalImage.setRGB(i/matrixWidth, j/matrixHeight,white.getRGB());
 						}
 					}
 					
@@ -61,10 +61,10 @@ public final class ImageUtils {
 		}
 		
 		for(int i=0; i<4; i++) {
-			finalImage = addTopRow(finalImage);
-			finalImage = addBottomRow(finalImage);
-			finalImage = addLeftColum(finalImage);
-			finalImage = addRightColum(finalImage);
+			finalImage = addTopRow(finalImage, Color.BLACK.getRGB());
+			finalImage = addBottomRow(finalImage, Color.BLACK.getRGB());
+			finalImage = addLeftColum(finalImage, Color.BLACK.getRGB());
+			finalImage = addRightColum(finalImage, Color.BLACK.getRGB());
 		}
 		
 		return finalImage;
@@ -81,12 +81,12 @@ public final class ImageUtils {
 		return image;
 	}
 
-	private static BufferedImage addLeftColum(BufferedImage image) {
+	private static BufferedImage addLeftColum(BufferedImage image, int color) {
 		int imageWidth = image.getWidth();
 		int imageHeight = image.getHeight();
 		BufferedImage newImage = new BufferedImage(imageWidth + 1, imageHeight, BufferedImage.TYPE_INT_RGB);
 		for (int i = 0; i < imageHeight; i++) {
-			newImage.setRGB(0, i, white.getRGB());
+			newImage.setRGB(0, i, color);
 		}
 
 		for (int i = 0; i < imageWidth; i++) {
@@ -97,12 +97,12 @@ public final class ImageUtils {
 		return newImage;
 	}
 
-	private static BufferedImage addRightColum(BufferedImage image) {
+	private static BufferedImage addRightColum(BufferedImage image, int color) {
 		int imageWidth = image.getWidth();
 		int imageHeight = image.getHeight();
 		BufferedImage newImage = new BufferedImage(imageWidth + 1, imageHeight, BufferedImage.TYPE_INT_RGB);
 		for (int i = 0; i < imageHeight; i++) {
-			newImage.setRGB(imageWidth, i, white.getRGB());
+			newImage.setRGB(imageWidth, i, color);
 		}
 
 		for (int i = 0; i < imageWidth; i++) {
@@ -115,12 +115,12 @@ public final class ImageUtils {
 		return newImage;
 	}
 
-	private static BufferedImage addTopRow(BufferedImage image) {
+	private static BufferedImage addTopRow(BufferedImage image, int color) {
 		int imageWidth = image.getWidth();
 		int imageHeight = image.getHeight();
 		BufferedImage newImage = new BufferedImage(imageWidth, imageHeight + 1, BufferedImage.TYPE_INT_RGB);
 		for (int i = 0; i < imageWidth; i++) {
-			newImage.setRGB(i, 0, white.getRGB());
+			newImage.setRGB(i, 0, color);
 		}
 
 		for (int i = 0; i < imageWidth; i++) {
@@ -131,12 +131,12 @@ public final class ImageUtils {
 		return newImage;
 	}
 
-	private static BufferedImage addBottomRow(BufferedImage image) {
+	private static BufferedImage addBottomRow(BufferedImage image, int color) {
 		int imageWidth = image.getWidth();
 		int imageHeight = image.getHeight();
 		BufferedImage newImage = new BufferedImage(imageWidth, imageHeight + 1, BufferedImage.TYPE_INT_RGB);
 		for (int i = 0; i < imageWidth; i++) {
-			newImage.setRGB(i, imageHeight, white.getRGB());
+			newImage.setRGB(i, imageHeight, color);
 		}
 
 		for (int i = 0; i < imageWidth; i++) {

@@ -25,14 +25,11 @@ public class Launcher {
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		NeuralNetwork neuralNetwork = deserializeNeuralNetwork();
 		
-		File file = new File("C:\\Users\\Kaloyan Spiridonov\\Desktop\\number.jpg");
+		File file = new File("C:\\Users\\Elena\\Desktop\\number.jpg");
 		BufferedImage img = ImageIO.read(file);
 		List<BufferedImage> digits = ImageUtils.splitToDigits(img);
-		
 		for (int i = 0; i < digits.size(); i++) {
 			BufferedImage newImage = ImageUtils.prepareDigit(digits.get(i));
-			
-			newImage = blackWhiteSwap(newImage);
 			neuralNetwork.setInputs(otsu(imageToArray(newImage)));
             double[] receivedOutput = neuralNetwork.getOutput();
             BufferedImage bla = new BufferedImage(28, 28, BufferedImage.TYPE_BYTE_GRAY);
@@ -45,7 +42,7 @@ public class Launcher {
 					k++;
 				}					
 			}
-			ImageUtils.save(bla, "jpg", new File("C:\\Users\\Kaloyan Spiridonov\\Desktop\\bla.jpg"));
+			ImageUtils.save(bla, "jpg", new File("C:\\Users\\Elena\\Desktop\\bla.jpg"));
             
             
             		
@@ -60,20 +57,9 @@ public class Launcher {
 
             System.out.println("Recognized: " +  recognizedDigit + ". Corresponding output value was " + max);
 
-			ImageUtils.save(newImage, "jpg", new File("C:\\Users\\Kaloyan Spiridonov\\Desktop\\digit" + i + ".jpg"));
+			ImageUtils.save(newImage, "jpg", new File("C:\\Users\\Elena\\Desktop\\digit" + i + ".jpg"));
 		}
 
-	}
-
-	private static BufferedImage blackWhiteSwap(BufferedImage image) {
-		for (int i = 0; i < image.getWidth(); i++) {
-			for (int j = 0; j < image.getHeight(); j++) {
-				Color color = new Color(image.getRGB(i, j));
-				Color color2 = new Color(255-color.getRed(),255- color.getGreen(),255- color.getBlue());
-					image.setRGB(i, j, color2.getRGB());
-			}
-		}
-		return image;
 	}
 
 	private static double[] imageToArray(BufferedImage image) {
@@ -83,11 +69,6 @@ public class Launcher {
 			for (int j = 0; j < image.getHeight(); j++) {
 				double color = image.getRGB(j, i)&0xFF;
 				arrayImage[k]=color;
-//				if (color > 127) {
-//					arrayImage[k] = 1;
-//				} else {
-//					arrayImage[k] = 0;
-//				}
 				k++;
 			}
 		}
